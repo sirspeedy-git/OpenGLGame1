@@ -250,7 +250,7 @@ int main(void) {
 
 		lightCubeShader.use();
 		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
-		lightCubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightCubeShader.setVec3("lightColor", glm::vec3(1.0));
 		lightCubeShader.setVec3("lightPos", glm::vec3(100,100,100));
 
 		lightCubeShader.setMat4("projection", projection);
@@ -258,13 +258,25 @@ int main(void) {
 
 		glBindVertexArray(lightCubeVAO);
 
+		lightCubeShader.setVec3("objectColor", glm::vec3(1.0, 0.7, 0.6));
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0, -0.5, 0));
+		model = glm::scale(model, glm::vec3(25, 0.1, 25));
+		lightCubeShader.setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
+
 		for (int x = 0; x < 5; x++) {
-			for (int z = 0; z < 5; z++) {
-				model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(x * 1.25, 0, z * 1.25));
-				model = glm::scale(model, glm::vec3(1));
-				lightCubeShader.setMat4("model", model);
-				glDrawArrays(GL_TRIANGLES, 0, 36);
+			for (int y = 0; y < 5; y++) {
+				for (int z = 0; z < 5; z++) {
+					model = glm::mat4(1.0f);
+					model = glm::translate(model, glm::vec3(x * 1.25, y * 1.25, z * 1.25));
+					model = glm::scale(model, glm::vec3(1));
+					lightCubeShader.setMat4("model", model);
+					glDrawArrays(GL_TRIANGLES, 0, 36);
+				}
 			}
 		}
 		
