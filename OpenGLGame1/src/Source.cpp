@@ -176,6 +176,9 @@ int main(void) {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
 	//unsigned int diffuseMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Color.jpg");
 	//unsigned int specularMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Roughness.jpg");
 	//unsigned int diffuseMap2 = loadTexture("res/textures/container2.png");
@@ -246,21 +249,26 @@ int main(void) {
 		*/
 
 		lightCubeShader.use();
+		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
+		lightCubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightCubeShader.setVec3("lightPos", glm::vec3(100,100,100));
+
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
 		glBindVertexArray(lightCubeVAO);
 
+		for (int x = 0; x < 5; x++) {
+			for (int z = 0; z < 5; z++) {
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(x * 1.25, 0, z * 1.25));
+				model = glm::scale(model, glm::vec3(1));
+				lightCubeShader.setMat4("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
+		
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0));
-		model = glm::scale(model, glm::vec3(1));
-		lightCubeShader.setMat4("model", model);
-		
-		lightCubeShader.setVec3("col", glm::vec3(0.5, 1, 0.7));
-		
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		
 
 		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
