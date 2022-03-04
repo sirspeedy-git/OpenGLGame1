@@ -7,6 +7,13 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices){
 	SetupMesh();
 }
 
+Mesh::~Mesh(){
+	std::printf("Delete VAO, VBO, EBO");
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+}
+
 void Mesh::Draw(/*Shader& shader */) {
 	// draw mesh
 	glBindVertexArray(VAO);

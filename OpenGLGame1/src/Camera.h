@@ -66,6 +66,10 @@ public:
         return Position;
     }
 
+    glm::vec3 GetRotation() {
+        return glm::vec3(Yaw, Pitch, Roll);
+    }
+
     void ProcessKeyboard(CameraMovement direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)

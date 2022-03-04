@@ -118,6 +118,23 @@ int main(void) {
 		{glm::vec3(-0.5, 0.5,-0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //10
 		{glm::vec3(-0.5, 0.5, 0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //11
 
+		//right
+		{glm::vec3( 0.5, 0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //12
+		{glm::vec3( 0.5, 0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //13
+		{glm::vec3( 0.5,-0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //14
+		{glm::vec3( 0.5,-0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //15
+
+		//bottom
+		{glm::vec3(-0.5, -0.5,  -0.5),  glm::vec3(0,-1.0,0), glm::vec2(0,0)}, //16
+		{glm::vec3(0.5, -0.5,  0.5),  glm::vec3(0,-1.0,0), glm::vec2(0,0)}, //17
+		{glm::vec3(0.5, -0.5,  -0.5),  glm::vec3(0,-1.0,0), glm::vec2(0,0)}, //18
+		{glm::vec3(-0.5, -0.5,  0.5),  glm::vec3(0,-1.0,0), glm::vec2(0,0)}, //19
+
+		//top
+		{glm::vec3(-0.5,  0.5,  -0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //20
+		{glm::vec3( 0.5,  0.5,  -0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //21
+		{glm::vec3( 0.5,  0.5,   0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //22
+		{glm::vec3(-0.5,  0.5,   0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //23
 	};
 
 	std::vector<unsigned int> indices{
@@ -130,11 +147,18 @@ int main(void) {
 		11,8,10,
 		8, 11, 9,
 
+		12,13,14,
+		14,15,12,
 
+		16,17,18,
+		17,16,19,
+
+		20,21,22,
+		22,23,20,
 	};
 
 	Mesh quad(newVertices, indices);
-
+	/*
 	float vertices[] = {
 		// positions          // normals           // texture coords
 		//back face
@@ -160,7 +184,7 @@ int main(void) {
 		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-
+		
 		//right face
 		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
@@ -222,7 +246,7 @@ int main(void) {
 
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
+	*/
 	//unsigned int diffuseMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Color.jpg");
 	//unsigned int specularMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Roughness.jpg");
 	//unsigned int diffuseMap2 = loadTexture("res/textures/container2.png");
@@ -233,6 +257,9 @@ int main(void) {
 	//lightingShader.use();
 	//lightingShader.setInt("material.diffuse", 0);
 	//lightingShader.setInt("material.specular", 1);
+
+	glm::vec3 pos = glm::vec3(0,0,0);
+	glm::vec3 vel = glm::vec3(1,0.1,-0.2);
 
 	while (!glfwWindowShouldClose(window)) {
 		{ Timer timer;
@@ -300,7 +327,7 @@ int main(void) {
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 
-		glBindVertexArray(lightCubeVAO);
+		//glBindVertexArray(lightCubeVAO);
 
 		lightCubeShader.setVec3("objectColor", glm::vec3(1.0, 0.7, 0.6));
 
@@ -308,7 +335,7 @@ int main(void) {
 		model = glm::translate(model, glm::vec3(0, -0.5, 0));
 		model = glm::scale(model, glm::vec3(25, 0.1, 25));
 		lightCubeShader.setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		quad.Draw();
 
 		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
 
@@ -319,7 +346,7 @@ int main(void) {
 					model = glm::translate(model, glm::vec3(x * 1.25, y * 1.25, z * 1.25));
 					model = glm::scale(model, glm::vec3(1));
 					lightCubeShader.setMat4("model", model);
-					glDrawArrays(GL_TRIANGLES, 0, 36);
+					quad.Draw();
 				}
 			}
 		}
@@ -327,11 +354,19 @@ int main(void) {
 		lightCubeShader.setVec3("objectColor", glm::vec3(1));
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0,10,-2));
+		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0, 1, 0));
 		model = glm::scale(model, glm::vec3(0.5));
 		lightCubeShader.setMat4("model", model);
 		quad.Draw();
 
+		pos += vel * deltaTime;
 
+		lightCubeShader.setVec3("objectColor", glm::vec3(0));
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, pos);
+		model = glm::scale(model, glm::vec3(0.5));
+		lightCubeShader.setMat4("model", model);
+		quad.Draw();
 
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
@@ -341,9 +376,9 @@ int main(void) {
 
 
 
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteVertexArrays(1, &lightCubeVAO);
-	glDeleteBuffers(1, &VBO);
+	//glDeleteVertexArrays(1, &cubeVAO);
+	//glDeleteVertexArrays(1, &lightCubeVAO);
+	//glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();
 	return 0;
