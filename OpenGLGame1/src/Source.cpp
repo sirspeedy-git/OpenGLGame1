@@ -10,6 +10,7 @@
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "glm/glm/gtc/type_ptr.hpp"
+#include "Mesh.h"
 
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
@@ -25,7 +26,7 @@ int WIDTH = 1280, HEIGHT = 720;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-Camera camera(glm::vec3(0.0f, 1.0f, 5.0f));
+Camera camera(glm::vec3(5.0f, 1.0f, 10.0f));
 float lastX = WIDTH / 2;
 float lastY = HEIGHT / 2;
 bool firstMouse = true;
@@ -83,9 +84,9 @@ int main(void) {
 	glewInit();
 
 	glEnable(GL_MULTISAMPLE);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	//glFrontFace(GL_CW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 
 	//Set the area were opengl will render too
 	glViewport(0, 0, WIDTH, HEIGHT);
@@ -97,8 +98,46 @@ int main(void) {
 	Shader lightCubeShader("res/shaders/light.vert", "res/shaders/light.frag");
 	Shader basicColor("res/shaders/colour.vert", "res/shaders/colours.frag");
 
+
+	std::vector<Vertex> newVertices{
+		//front
+		{glm::vec3(-0.5,-0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//0
+		{glm::vec3( 0.5,-0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//1
+		{glm::vec3( 0.5, 0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//2
+		{glm::vec3(-0.5, 0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//3
+																		 
+		//back															 
+		{glm::vec3(-0.5,-0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //4
+		{glm::vec3( 0.5,-0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //5
+		{glm::vec3( 0.5, 0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //6
+		{glm::vec3(-0.5, 0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //7
+
+		//left
+		{glm::vec3(-0.5,-0.5,-0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //8
+		{glm::vec3(-0.5,-0.5, 0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //9
+		{glm::vec3(-0.5, 0.5,-0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //10
+		{glm::vec3(-0.5, 0.5, 0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //11
+
+	};
+
+	std::vector<unsigned int> indices{
+		4,5,6,
+		6,7,4,
+
+		0,2,1,
+		0,3,2,
+
+		11,8,10,
+		8, 11, 9,
+
+
+	};
+
+	Mesh quad(newVertices, indices);
+
 	float vertices[] = {
 		// positions          // normals           // texture coords
+		//back face
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
@@ -106,20 +145,23 @@ int main(void) {
 		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
+		//front face
 		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
 		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
 
+		//left face
 		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
 		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 
+		//right face
 		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
@@ -127,13 +169,15 @@ int main(void) {
 		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
+		//bottom
 		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
 		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
 
+		//top
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
@@ -191,7 +235,7 @@ int main(void) {
 	//lightingShader.setInt("material.specular", 1);
 
 	while (!glfwWindowShouldClose(window)) {
-	{ Timer timer;
+		{ Timer timer;
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -217,7 +261,7 @@ int main(void) {
 		//lightingShader.setMat4("projection", projection);
 		//lightingShader.setMat4("view", view);
 
-		
+
 		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0));
 		//model = glm::scale(model, glm::vec3(10.0f, 0.1f, 10.0f));
@@ -243,7 +287,7 @@ int main(void) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap2);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap2);		
+		glBindTexture(GL_TEXTURE_2D, specularMap2);
 		glBindVertexArray(cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		*/
@@ -251,7 +295,7 @@ int main(void) {
 		lightCubeShader.use();
 		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
 		lightCubeShader.setVec3("lightColor", glm::vec3(1.0));
-		lightCubeShader.setVec3("lightPos", glm::vec3(100,100,100));
+		lightCubeShader.setVec3("lightPos", glm::vec3(100, 80, 100));
 
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
@@ -279,10 +323,15 @@ int main(void) {
 				}
 			}
 		}
-		
+
+		lightCubeShader.setVec3("objectColor", glm::vec3(1));
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0,10,-2));
+		model = glm::scale(model, glm::vec3(0.5));
+		lightCubeShader.setMat4("model", model);
+		quad.Draw();
 
 
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
