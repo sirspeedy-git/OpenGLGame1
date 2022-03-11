@@ -11,6 +11,7 @@
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "glm/glm/gtc/type_ptr.hpp"
 #include "Mesh.h"
+#include "PhysicsWorld.h"
 
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
@@ -26,7 +27,7 @@ int WIDTH = 1280, HEIGHT = 720;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-Camera camera(glm::vec3(5.0f, 1.0f, 10.0f));
+Camera camera(glm::vec3(5.0f, 5.0f, 25.0f));
 float lastX = WIDTH / 2;
 float lastY = HEIGHT / 2;
 bool firstMouse = true;
@@ -57,6 +58,23 @@ public:
 private:
 	std::chrono::time_point< std::chrono::high_resolution_clock> m_StartTimepoint;
 };
+
+
+//TODO - rigidbody phisics
+//TODO - shadows
+//TODO - model loading
+
+std::vector<Object> gameobjects{
+	{glm::vec3(-6,11,0), glm::vec3(2,6,1), glm::vec3(0,0,0), 1},
+	{glm::vec3(-3,8,7), glm::vec3(0,0,0), glm::vec3(3,20,0), 10},
+	{glm::vec3(6,11,0), glm::vec3(0,0,0), glm::vec3(5,5,5), 2},
+	{glm::vec3(3,5,0), glm::vec3(0,0,0), glm::vec3(-5,5,5), 1},
+	{glm::vec3(6,7,4), glm::vec3(0,0,0), glm::vec3(5,50,5), 1},
+	{glm::vec3(0,7,0), glm::vec3(0,0,0), glm::vec3(30,100,0), 1},
+};
+
+PhysicsWorld pWorld;
+
 
 int main(void) {
 
@@ -94,7 +112,7 @@ int main(void) {
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	Shader lightingShader("res/shaders/Lit.vert", "res/shaders/Lit.frag");
+	//Shader lightingShader("res/shaders/Lit.vert", "res/shaders/Lit.frag");
 	Shader lightCubeShader("res/shaders/light.vert", "res/shaders/light.frag");
 	Shader basicColor("res/shaders/colour.vert", "res/shaders/colours.frag");
 
@@ -157,7 +175,6 @@ int main(void) {
 		22,23,20,
 	};
 
-	Mesh quad(newVertices, indices);
 	/*
 	float vertices[] = {
 		// positions          // normals           // texture coords
@@ -258,8 +275,21 @@ int main(void) {
 	//lightingShader.setInt("material.diffuse", 0);
 	//lightingShader.setInt("material.specular", 1);
 
-	glm::vec3 pos = glm::vec3(0,0,0);
-	glm::vec3 vel = glm::vec3(1,0.1,-0.2);
+	//create a cube mesh
+	Mesh quad(newVertices, indices);
+
+	Object cubeOBJ{glm::vec3(-6,11,0), glm::vec3(0), glm::vec3(0), 1};
+	Object cubeOBJ1{glm::vec3(-3,8,7), glm::vec3(0), glm::vec3(0), 1};
+	Object cubeOBJ2{glm::vec3(6,11,0), glm::vec3(0), glm::vec3(0), 1};
+
+	//add gameobjects to the physics world
+	//pWorld.AddObject(&gameobjects[0]);
+	//pWorld.AddObject(&gameobjects[1]);
+	//pWorld.AddObject(&gameobjects[2]);
+
+	for (int i = 0; i < gameobjects.size(); i++) {
+		pWorld.AddObject(&gameobjects[i]);
+	}
 
 	while (!glfwWindowShouldClose(window)) {
 		{ Timer timer;
@@ -326,9 +356,7 @@ int main(void) {
 
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
-
-		//glBindVertexArray(lightCubeVAO);
-
+		
 		lightCubeShader.setVec3("objectColor", glm::vec3(1.0, 0.7, 0.6));
 
 		model = glm::mat4(1.0f);
@@ -336,7 +364,7 @@ int main(void) {
 		model = glm::scale(model, glm::vec3(25, 0.1, 25));
 		lightCubeShader.setMat4("model", model);
 		quad.Draw();
-
+		/*
 		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
 
 		for (int x = 0; x < 5; x++) {
@@ -358,16 +386,30 @@ int main(void) {
 		model = glm::scale(model, glm::vec3(0.5));
 		lightCubeShader.setMat4("model", model);
 		quad.Draw();
+		*/
+		//--------------------------------
 
-		pos += vel * deltaTime;
+		/*cubeOBJ.pos += cubeOBJ.vel * deltaTime;
+		if (cubeOBJ.pos.y < 0.1 + 1 - 0.5) {
+			cubeOBJ.pos -= cubeOBJ.vel * deltaTime;
+		}
+		*/
+		lightCubeShader.use();
+		lightCubeShader.setVec3("objectColor", glm::vec3(1,0.1,0.1));
 
-		lightCubeShader.setVec3("objectColor", glm::vec3(0));
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, pos);
-		model = glm::scale(model, glm::vec3(0.5));
-		lightCubeShader.setMat4("model", model);
-		quad.Draw();
+		
 
+		pWorld.Step(deltaTime);
+
+		for (Object obj : gameobjects) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, obj.pos);
+			model = glm::scale(model, glm::vec3(2));
+			lightCubeShader.setMat4("model", model);
+			quad.Draw();
+		}
+
+		//----------------------------------
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -415,6 +457,9 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
 
+	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_RELEASE) {
+		
+	}
 }
 
 
