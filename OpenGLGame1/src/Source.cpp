@@ -75,8 +75,10 @@ std::vector<Object> gameobjects{
 
 PhysicsWorld pWorld;
 
+bool shouldClose;
+GLFWwindow* window;
 
-int main(void) {
+int Init() {
 
 	//Initialize GLFW
 	if (!glfwInit()) {
@@ -89,7 +91,7 @@ int main(void) {
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	//Create a window
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL", nullptr, nullptr);
+	window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL", nullptr, nullptr);
 	if (window == NULL) {
 		std::cout << "Failed to create a GLFW window" << std::endl;
 		glfwTerminate();
@@ -111,6 +113,14 @@ int main(void) {
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+
+	glEnable(GL_DEPTH_TEST);
+
+}
+
+int main(void) {
+	//Initialize GLFW and setup a window
+	Init();
 
 	//Shader lightingShader("res/shaders/Lit.vert", "res/shaders/Lit.frag");
 	Shader lightCubeShader("res/shaders/light.vert", "res/shaders/light.frag");
@@ -174,7 +184,63 @@ int main(void) {
 		20,21,22,
 		22,23,20,
 	};
+	/*
+#define ICO_X .525731112119133606f
+#define ICO_Z .850650808352039932f
 
+	static const unsigned IcoVertCount = 12;
+	static const unsigned IcoIndexCount = 60;
+
+	std::vector<Vertex> IcoVerts = {
+		{glm::vec3(0, -ICO_X, -ICO_Z),     glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_Z,      0, -ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X, -ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_Z,      0,  ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(0, -ICO_X,  ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(0,  ICO_X,  ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_Z,      0,  ICO_X),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X,  ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_Z,      0, -ICO_X),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(0,   ICO_X, -ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(0,  -ICO_X, -ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+		{glm::vec3(ICO_Z,      0, -ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
+	};
+
+	std::vector<unsigned int> IcoIndex = {
+		 0,  1,  3, // Bottom
+		 3,  5,  7,
+		 7,  9, 11,
+		11, 13, 15,
+		15, 17, 19,
+		 0,  3,  2, // Middle
+		 2,  3,  6,
+		 3,  7,  6,
+		 6,  7, 10,
+		 7, 11, 10,
+		10, 11, 14,
+		11, 15, 14,
+		14, 15, 18,
+		15, 19, 18,
+		18, 19, 21,
+		 2,  6,  4, // Top
+		 6, 10,  8,
+		10, 14, 12,
+		14, 18, 16,
+		18, 21, 20
+	};
+
+	Mesh ico(IcoVerts, IcoIndex);
+	*/
 	/*
 	float vertices[] = {
 		// positions          // normals           // texture coords
@@ -269,7 +335,6 @@ int main(void) {
 	//unsigned int diffuseMap2 = loadTexture("res/textures/container2.png");
 	//unsigned int specularMap2 = loadTexture("res/textures/container2_specular.png");
 
-	glEnable(GL_DEPTH_TEST);
 
 	//lightingShader.use();
 	//lightingShader.setInt("material.diffuse", 0);
@@ -277,15 +342,6 @@ int main(void) {
 
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
-
-	Object cubeOBJ{glm::vec3(-6,11,0), glm::vec3(0), glm::vec3(0), 1};
-	Object cubeOBJ1{glm::vec3(-3,8,7), glm::vec3(0), glm::vec3(0), 1};
-	Object cubeOBJ2{glm::vec3(6,11,0), glm::vec3(0), glm::vec3(0), 1};
-
-	//add gameobjects to the physics world
-	//pWorld.AddObject(&gameobjects[0]);
-	//pWorld.AddObject(&gameobjects[1]);
-	//pWorld.AddObject(&gameobjects[2]);
 
 	for (int i = 0; i < gameobjects.size(); i++) {
 		pWorld.AddObject(&gameobjects[i]);
@@ -409,7 +465,7 @@ int main(void) {
 			spa = true;
 		}
 
-		pWorld.Step(deltaTime);
+		//pWorld.Step(deltaTime);
 
 		for (Object obj : gameobjects) {
 			model = glm::mat4(1.0f);
