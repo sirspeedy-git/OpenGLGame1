@@ -114,7 +114,7 @@ int main(void) {
 
 	//Shader lightingShader("res/shaders/Lit.vert", "res/shaders/Lit.frag");
 	Shader lightCubeShader("res/shaders/light.vert", "res/shaders/light.frag");
-	Shader basicColor("res/shaders/colour.vert", "res/shaders/colours.frag");
+	//Shader basicColor("res/shaders/colour.vert", "res/shaders/colours.frag");
 
 
 	std::vector<Vertex> newVertices{
@@ -290,9 +290,12 @@ int main(void) {
 	for (int i = 0; i < gameobjects.size(); i++) {
 		pWorld.AddObject(&gameobjects[i]);
 	}
+	std::cout << gameobjects.size() << std::endl;
+
+	bool spa = false;
 
 	while (!glfwWindowShouldClose(window)) {
-		{ Timer timer;
+		//{ Timer timer;
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -397,7 +400,14 @@ int main(void) {
 		lightCubeShader.use();
 		lightCubeShader.setVec3("objectColor", glm::vec3(1,0.1,0.1));
 
-		
+		if (currentFrame >= 5 && spa == false) {
+			gameobjects.push_back({ glm::vec3(0,5,0), glm::vec3(0,0,0), glm::vec3(0,0,0), 1 });
+			//for (int i = 0; i < gameobjects.size(); i++) {
+				pWorld.AddObject(&gameobjects.back());
+			//}
+			std::cout << gameobjects.size() << std::endl;
+			spa = true;
+		}
 
 		pWorld.Step(deltaTime);
 
@@ -413,7 +423,7 @@ int main(void) {
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		}
+		//}
 	}
 
 
