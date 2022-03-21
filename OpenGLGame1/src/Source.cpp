@@ -63,6 +63,7 @@ private:
 //TODO - rigidbody phisics
 //TODO - shadows
 //TODO - model loading
+//TODO - entitys
 
 std::vector<Object> gameobjects{
 	{glm::vec3(-6,11,0), glm::vec3(2,6,1), glm::vec3(0,0,0), 1},
@@ -72,6 +73,8 @@ std::vector<Object> gameobjects{
 	{glm::vec3(6,7,4), glm::vec3(0,0,0), glm::vec3(5,50,5), 1},
 	{glm::vec3(0,7,0), glm::vec3(0,0,0), glm::vec3(30,100,0), 1},
 };
+
+
 
 PhysicsWorld pWorld;
 
@@ -184,161 +187,6 @@ int main(void) {
 		20,21,22,
 		22,23,20,
 	};
-	/*
-#define ICO_X .525731112119133606f
-#define ICO_Z .850650808352039932f
-
-	static const unsigned IcoVertCount = 12;
-	static const unsigned IcoIndexCount = 60;
-
-	std::vector<Vertex> IcoVerts = {
-		{glm::vec3(0, -ICO_X, -ICO_Z),     glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_Z,      0, -ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X, -ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_Z,      0,  ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(0, -ICO_X,  ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(0,  ICO_X,  ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_Z,      0,  ICO_X),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X,  ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_Z,      0, -ICO_X),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(-ICO_X, -ICO_Z,      0),glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(0,   ICO_X, -ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(0,  -ICO_X, -ICO_Z),	   glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_X,  ICO_Z,      0), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-		{glm::vec3(ICO_Z,      0, -ICO_X), glm::vec3(0,0,1.0), glm::vec2(0,0)},
-	};
-
-	std::vector<unsigned int> IcoIndex = {
-		 0,  1,  3, // Bottom
-		 3,  5,  7,
-		 7,  9, 11,
-		11, 13, 15,
-		15, 17, 19,
-		 0,  3,  2, // Middle
-		 2,  3,  6,
-		 3,  7,  6,
-		 6,  7, 10,
-		 7, 11, 10,
-		10, 11, 14,
-		11, 15, 14,
-		14, 15, 18,
-		15, 19, 18,
-		18, 19, 21,
-		 2,  6,  4, // Top
-		 6, 10,  8,
-		10, 14, 12,
-		14, 18, 16,
-		18, 21, 20
-	};
-
-	Mesh ico(IcoVerts, IcoIndex);
-	*/
-	/*
-	float vertices[] = {
-		// positions          // normals           // texture coords
-		//back face
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-		//front face
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-
-		//left face
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		
-		//right face
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-		//bottom
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-
-		//top
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-	};
-
-
-	//Create and link the VBO
-	unsigned int VBO, cubeVAO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &VBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(cubeVAO);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	//UV attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-	unsigned int lightCubeVAO;
-	glGenVertexArrays(1, &lightCubeVAO);
-	glBindVertexArray(lightCubeVAO);
-
-	// we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	*/
-	//unsigned int diffuseMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Color.jpg");
-	//unsigned int specularMap = loadTexture("res/textures/Planks014_2K-JPG/Planks014_2K_Roughness.jpg");
-	//unsigned int diffuseMap2 = loadTexture("res/textures/container2.png");
-	//unsigned int specularMap2 = loadTexture("res/textures/container2_specular.png");
-
-
-	//lightingShader.use();
-	//lightingShader.setInt("material.diffuse", 0);
-	//lightingShader.setInt("material.specular", 1);
 
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
@@ -349,6 +197,9 @@ int main(void) {
 	std::cout << gameobjects.size() << std::endl;
 
 	bool spa = false;
+
+	float timer = 0;
+	int x = 0;
 
 	while (!glfwWindowShouldClose(window)) {
 		//{ Timer timer;
@@ -364,14 +215,6 @@ int main(void) {
 		glClearColor(0.9, 0.9, 1.0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//lightPos.x = cos(glfwGetTime()) * 4;
-		//lightPos.z = sin(glfwGetTime()) * 4;
-
-		//lightingShader.use();
-		//lightingShader.setVec3("viewPos", camera.Position);
-		//lightingShader.setFloat("material.shininess", 32.0f);
-		//lightingShader.setFloat("material.multiplier", 4.0f);
-
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 1000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		//lightingShader.setMat4("projection", projection);
@@ -379,34 +222,6 @@ int main(void) {
 
 
 		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0));
-		//model = glm::scale(model, glm::vec3(10.0f, 0.1f, 10.0f));
-		//lightingShader.setMat4("model", model);
-
-		/*
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//lightingShader.setFloat("material.multiplier", 1.0f);ss
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.6f, 0));
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		lightingShader.setMat4("model", model);
-		*/
-
-		/*
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap2);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap2);
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		*/
 
 		lightCubeShader.use();
 		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
@@ -423,53 +238,30 @@ int main(void) {
 		model = glm::scale(model, glm::vec3(25, 0.1, 25));
 		lightCubeShader.setMat4("model", model);
 		quad.Draw();
-		/*
-		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
-
-		for (int x = 0; x < 5; x++) {
-			for (int y = 0; y < 5; y++) {
-				for (int z = 0; z < 5; z++) {
-					model = glm::mat4(1.0f);
-					model = glm::translate(model, glm::vec3(x * 1.25, y * 1.25, z * 1.25));
-					model = glm::scale(model, glm::vec3(1));
-					lightCubeShader.setMat4("model", model);
-					quad.Draw();
-				}
-			}
-		}
-
-		lightCubeShader.setVec3("objectColor", glm::vec3(1));
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0,10,-2));
-		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0, 1, 0));
-		model = glm::scale(model, glm::vec3(0.5));
-		lightCubeShader.setMat4("model", model);
-		quad.Draw();
-		*/
-		//--------------------------------
-
-		/*cubeOBJ.pos += cubeOBJ.vel * deltaTime;
-		if (cubeOBJ.pos.y < 0.1 + 1 - 0.5) {
-			cubeOBJ.pos -= cubeOBJ.vel * deltaTime;
-		}
-		*/
+		
 		lightCubeShader.use();
 		lightCubeShader.setVec3("objectColor", glm::vec3(1,0.1,0.1));
 
-		if (currentFrame >= 5 && spa == false) {
-			gameobjects.push_back({ glm::vec3(0,5,0), glm::vec3(0,0,0), glm::vec3(0,0,0), 1 });
-			//for (int i = 0; i < gameobjects.size(); i++) {
-				pWorld.AddObject(&gameobjects.back());
-			//}
-			std::cout << gameobjects.size() << std::endl;
-			spa = true;
-		}
+		timer += deltaTime;
+
+		//if (timer >= 2) {
+		//	gameobjects.push_back({ glm::vec3(x,5,0), glm::vec3(0,0,0), glm::vec3(0,0,0), 1 });
+		//
+		//	pWorld.AddObject(&gameobjects.back());
+		//
+		//	std::cout << gameobjects.size() << std::endl;
+		//	timer = 0;
+		//	x+=2;
+		//}
+
+		//std::cout << timer << std::endl;
 
 		//pWorld.Step(deltaTime);
 
 		for (Object obj : gameobjects) {
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, obj.pos);
+			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0,1,0));
 			model = glm::scale(model, glm::vec3(2));
 			lightCubeShader.setMat4("model", model);
 			quad.Draw();
@@ -491,7 +283,6 @@ int main(void) {
 	glfwTerminate();
 	return 0;
 }
-
 
 
 void processInput(GLFWwindow* window) {
