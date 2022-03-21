@@ -11,7 +11,6 @@
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "glm/glm/gtc/type_ptr.hpp"
 #include "Mesh.h"
-#include "PhysicsWorld.h"
 
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
@@ -65,18 +64,28 @@ private:
 //TODO - model loading
 //TODO - entitys
 
-std::vector<Object> gameobjects{
-	{glm::vec3(-6,11,0), glm::vec3(2,6,1), glm::vec3(0,0,0), 1},
-	{glm::vec3(-3,8,7), glm::vec3(0,0,0), glm::vec3(3,20,0), 10},
-	{glm::vec3(6,11,0), glm::vec3(0,0,0), glm::vec3(5,5,5), 2},
-	{glm::vec3(3,5,0), glm::vec3(0,0,0), glm::vec3(-5,5,5), 1},
-	{glm::vec3(6,7,4), glm::vec3(0,0,0), glm::vec3(5,50,5), 1},
-	{glm::vec3(0,7,0), glm::vec3(0,0,0), glm::vec3(30,100,0), 1},
+struct Object {
+	glm::vec3 pos;
+	glm::vec3 Rot;
+	glm::vec3 Scale;
+	glm::vec3 color;
+	//Mesh mesh;
+	//Shader shader;
 };
 
+std::vector<Object> gameobjects{
+	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(1,1,1),glm::vec3(1, 0.1, 0.1)},
+	{glm::vec3(4,0,0),glm::vec3(22,15,70),glm::vec3(5,0.5,1),glm::vec3(0, 1.0, 0.1)},
+	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(25, 0.2, 25),glm::vec3(1.0, 0.7, 0.6)},
+};
 
+float randRange(float min, float max) {
+	int range = max - min + 1;
+	float num = rand() % range + min;
+	return num;
+}
 
-PhysicsWorld pWorld;
+//PhysicsWorld pWorld;
 
 bool shouldClose;
 GLFWwindow* window;
@@ -191,9 +200,17 @@ int main(void) {
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
 
-	for (int i = 0; i < gameobjects.size(); i++) {
-		pWorld.AddObject(&gameobjects[i]);
+
+	for (int i = 0; i < 1000; i++) {
+		gameobjects.push_back({ glm::vec3(randRange(-50,50), randRange(-50,50), randRange(-50,50)),
+										  glm::vec3(randRange(0, 360),randRange(0, 360),randRange(0, 360)),
+										  glm::vec3(randRange(0.5, 2),randRange(0.5, 2),randRange(0.5, 2)),
+										  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255))});
 	}
+
+	//for (int i = 0; i < gameobjects.size(); i++) {
+	//	pWorld.AddObject(&gameobjects[i]);
+	//}
 	std::cout << gameobjects.size() << std::endl;
 
 	bool spa = false;
@@ -224,25 +241,21 @@ int main(void) {
 		glm::mat4 model = glm::mat4(1.0f);
 
 		lightCubeShader.use();
-		lightCubeShader.setVec3("objectColor", glm::vec3(0.5, 1, 0.7));
 		lightCubeShader.setVec3("lightColor", glm::vec3(1.0));
 		lightCubeShader.setVec3("lightPos", glm::vec3(100, 80, 100));
 
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
 		
-		lightCubeShader.setVec3("objectColor", glm::vec3(1.0, 0.7, 0.6));
+		//lightCubeShader.setVec3("objectColor", glm::vec3(1.0, 0.7, 0.6));
+		//
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(0, -0.5, 0));
+		//model = glm::scale(model, glm::vec3(25, 0.1, 25));
+		//lightCubeShader.setMat4("model", model);
+		//quad.Draw();
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0, -0.5, 0));
-		model = glm::scale(model, glm::vec3(25, 0.1, 25));
-		lightCubeShader.setMat4("model", model);
-		quad.Draw();
-		
-		lightCubeShader.use();
-		lightCubeShader.setVec3("objectColor", glm::vec3(1,0.1,0.1));
-
-		timer += deltaTime;
+		//timer += deltaTime;
 
 		//if (timer >= 2) {
 		//	gameobjects.push_back({ glm::vec3(x,5,0), glm::vec3(0,0,0), glm::vec3(0,0,0), 1 });
@@ -253,17 +266,20 @@ int main(void) {
 		//	timer = 0;
 		//	x+=2;
 		//}
-
 		//std::cout << timer << std::endl;
-
 		//pWorld.Step(deltaTime);
 
 		for (Object obj : gameobjects) {
+			lightCubeShader.use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, obj.pos);
-			model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0,1,0));
-			model = glm::scale(model, glm::vec3(2));
+			model = glm::rotate(model, glm::radians(obj.Rot.x), glm::vec3(1,0,0));
+			model = glm::rotate(model, glm::radians(obj.Rot.y), glm::vec3(0,1,0));
+			model = glm::rotate(model, glm::radians(obj.Rot.z), glm::vec3(0,0,1));
+			model = glm::scale(model, obj.Scale);
+
 			lightCubeShader.setMat4("model", model);
+			lightCubeShader.setVec3("objectColor", obj.color);
 			quad.Draw();
 		}
 
