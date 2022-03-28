@@ -74,9 +74,8 @@ struct Object {
 };
 
 std::vector<Object> gameobjects{
+	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(500, 0.2, 500),glm::vec3(1.0, 0.7, 0.6)},
 	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(1,1,1),glm::vec3(1, 0.1, 0.1)},
-	{glm::vec3(4,0,0),glm::vec3(22,15,70),glm::vec3(5,0.5,1),glm::vec3(0, 1.0, 0.1)},
-	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(25, 0.2, 25),glm::vec3(1.0, 0.7, 0.6)},
 };
 
 float randRange(float min, float max) {
@@ -133,7 +132,7 @@ int Init() {
 int main(void) {
 	//Initialize GLFW and setup a window
 	Init();
-
+	
 	//Shader lightingShader("res/shaders/Lit.vert", "res/shaders/Lit.frag");
 	Shader lightCubeShader("res/shaders/light.vert", "res/shaders/light.frag");
 	//Shader basicColor("res/shaders/colour.vert", "res/shaders/colours.frag");
@@ -142,14 +141,14 @@ int main(void) {
 	std::vector<Vertex> newVertices{
 		//front
 		{glm::vec3(-0.5,-0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//0
-		{glm::vec3( 0.5,-0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//1
-		{glm::vec3( 0.5, 0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//2
+		{glm::vec3(0.5,-0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//1
+		{glm::vec3(0.5, 0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//2
 		{glm::vec3(-0.5, 0.5, 0.5),  glm::vec3(0,0,1.0), glm::vec2(0,0)},//3
-																		 
+
 		//back															 
 		{glm::vec3(-0.5,-0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //4
-		{glm::vec3( 0.5,-0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //5
-		{glm::vec3( 0.5, 0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //6
+		{glm::vec3(0.5,-0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //5
+		{glm::vec3(0.5, 0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //6
 		{glm::vec3(-0.5, 0.5,-0.5),  glm::vec3(0,0,-1), glm::vec2(0,0)}, //7
 
 		//left
@@ -159,10 +158,10 @@ int main(void) {
 		{glm::vec3(-0.5, 0.5, 0.5),  glm::vec3(-1,0,0), glm::vec2(0,0)}, //11
 
 		//right
-		{glm::vec3( 0.5, 0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //12
-		{glm::vec3( 0.5, 0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //13
-		{glm::vec3( 0.5,-0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //14
-		{glm::vec3( 0.5,-0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //15
+		{glm::vec3(0.5, 0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //12
+		{glm::vec3(0.5, 0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //13
+		{glm::vec3(0.5,-0.5, -0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //14
+		{glm::vec3(0.5,-0.5,  0.5),  glm::vec3(1,0,0), glm::vec2(0,0)}, //15
 
 		//bottom
 		{glm::vec3(-0.5, -0.5,  -0.5),  glm::vec3(0,-1.0,0), glm::vec2(0,0)}, //16
@@ -172,8 +171,8 @@ int main(void) {
 
 		//top
 		{glm::vec3(-0.5,  0.5,  -0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //20
-		{glm::vec3( 0.5,  0.5,  -0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //21
-		{glm::vec3( 0.5,  0.5,   0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //22
+		{glm::vec3(0.5,  0.5,  -0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //21
+		{glm::vec3(0.5,  0.5,   0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //22
 		{glm::vec3(-0.5,  0.5,   0.5),  glm::vec3(0,1.0,0), glm::vec2(0,0)}, //23
 	};
 
@@ -199,21 +198,20 @@ int main(void) {
 
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
-
-
+	
+	srand(time(0));
 	for (int i = 0; i < 1000; i++) {
-		gameobjects.push_back({ glm::vec3(randRange(-50,50), randRange(-50,50), randRange(-50,50)),
+		gameobjects.push_back({ glm::vec3(randRange(-250,250), randRange(-50,50) + 50, randRange(-250,250)),
 										  glm::vec3(randRange(0, 360),randRange(0, 360),randRange(0, 360)),
-										  glm::vec3(randRange(0.5, 2),randRange(0.5, 2),randRange(0.5, 2)),
-										  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255))});
+										  glm::vec3(randRange(0.5, 5),randRange(0.5, 5),randRange(0.5, 5)),
+										  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255)) });
+		//std::cout << "{glm::vec3(" << gameobjects[i + 2].pos.x << "," << gameobjects[i + 2].pos.y << "," << gameobjects[i + 2].pos.z << ")}" << std::endl;
 	}
-
+	
 	//for (int i = 0; i < gameobjects.size(); i++) {
 	//	pWorld.AddObject(&gameobjects[i]);
 	//}
 	std::cout << gameobjects.size() << std::endl;
-
-	bool spa = false;
 
 	float timer = 0;
 	int x = 0;
@@ -242,7 +240,7 @@ int main(void) {
 
 		lightCubeShader.use();
 		lightCubeShader.setVec3("lightColor", glm::vec3(1.0));
-		lightCubeShader.setVec3("lightPos", glm::vec3(100, 80, 100));
+		lightCubeShader.setVec3("lightPos", glm::vec3(1000, 800, 1000));
 
 		lightCubeShader.setMat4("projection", projection);
 		lightCubeShader.setMat4("view", view);
