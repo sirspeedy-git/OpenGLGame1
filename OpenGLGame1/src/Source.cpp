@@ -14,7 +14,6 @@
 
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
-
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* widow, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -64,7 +63,8 @@ private:
 //TODO - model loading
 //TODO - entitys
 
-struct Object {
+class Object {
+public:
 	glm::vec3 pos;
 	glm::vec3 Rot;
 	glm::vec3 Scale;
@@ -73,10 +73,84 @@ struct Object {
 	//Shader shader;
 };
 
-std::vector<Object> gameobjects{
+class GameObject {
+public:
+	GameObject(Mesh* mesh, Shader* shader){
+		this->mesh = mesh;
+		this->shader = shader;
+		this->pos = glm::vec3(0);
+		this->Rot = glm::vec3(0);
+		this->Scale = glm::vec3(1);
+		this->color = glm::vec3(1,0,1);
+		this->model = glm::mat4(1.0f);
+	}
+
+	GameObject(Mesh* mesh, Shader* shader, glm::vec3 posistion, glm::vec3 rotation, glm::vec3 scale, glm::vec3 color) {
+		this->mesh = mesh;
+		this->shader = shader;
+		this->pos = posistion;
+		this->Rot = rotation;
+		this->Scale = scale;
+		this->color = color;
+		this->model = glm::mat4(1.0f);
+	}
+
+	~GameObject() {};
+
+	void Render() {
+		shader->use();
+		shader->setMat4("model", model);
+		shader->setVec3("objectColor", color);
+		mesh->Draw();
+	}
+
+	void Update() {
+		UpdateModelMatrix();
+	}
+
+	void setPosistion(glm::vec3 posistion) {
+		this->pos = posistion;
+	}
+
+	void setRotation(glm::vec3 rotation) {
+		this->Rot = rotation;
+	}
+
+	void setScale(glm::vec3 scale) {
+		this->Scale = scale;
+	}
+
+	void setColor(glm::vec3 color) {
+		this->color = color;
+	}
+
+private:
+
+	void UpdateModelMatrix() {
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, pos);
+		model = glm::rotate(model, glm::radians(Rot.x), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(Rot.y), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(Rot.z), glm::vec3(0, 0, 1));
+		model = glm::scale(model, Scale);
+	}
+
+	glm::vec3 pos;
+	glm::vec3 Rot;
+	glm::vec3 Scale;
+	glm::vec3 color;
+	glm::mat4 model;
+	Mesh* mesh;
+	Shader* shader;
+	//unsigned int ID;
+};
+
+/*std::vector<Object> gameobjects{
 	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(500, 0.2, 500),glm::vec3(1.0, 0.7, 0.6)},
 	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(1,1,1),glm::vec3(1, 0.1, 0.1)},
-};
+};*/
+
+
 
 float randRange(float min, float max) {
 	int range = max - min + 1;
@@ -199,25 +273,30 @@ int main(void) {
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
 	
-	srand(time(0));
-	for (int i = 0; i < 1000; i++) {
-		gameobjects.push_back({ glm::vec3(randRange(-250,250), randRange(-50,50) + 50, randRange(-250,250)),
-										  glm::vec3(randRange(0, 360),randRange(0, 360),randRange(0, 360)),
-										  glm::vec3(randRange(0.5, 5),randRange(0.5, 5),randRange(0.5, 5)),
-										  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255)) });
-		//std::cout << "{glm::vec3(" << gameobjects[i + 2].pos.x << "," << gameobjects[i + 2].pos.y << "," << gameobjects[i + 2].pos.z << ")}" << std::endl;
-	}
+	//srand(time(0));
+	//for (int i = 0; i < 5000; i++) {
+	//	gameobjects.push_back({ glm::vec3(randRange(-250,250), randRange(-50,50) + 50, randRange(-250,250)),
+	//									  glm::vec3(randRange(0, 360),randRange(0, 360),randRange(0, 360)),
+	//									  glm::vec3(randRange(0.5, 5),randRange(0.5, 5),randRange(0.5, 5)),
+	//									  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255)) });
+	//	//std::cout << "{glm::vec3(" << gameobjects[i + 2].pos.x << "," << gameobjects[i + 2].pos.y << "," << gameobjects[i + 2].pos.z << ")}" << std::endl;
+	//}
 	
 	//for (int i = 0; i < gameobjects.size(); i++) {
 	//	pWorld.AddObject(&gameobjects[i]);
 	//}
-	std::cout << gameobjects.size() << std::endl;
+	//std::cout << gameobjects.size() << std::endl;
 
 	float timer = 0;
 	int x = 0;
 
+	GameObject plane(&quad, &lightCubeShader, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(500, 0.2, 500), glm::vec3(1.0, 0.7, 0.6));
+	GameObject cube(&quad, &lightCubeShader);
+	cube.setPosistion(glm::vec3(0,1,0));
+	cube.setColor(glm::vec3(1.0, 0.1, 0.2));
+
 	while (!glfwWindowShouldClose(window)) {
-		//{ Timer timer;
+		{ Timer timer;
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -267,7 +346,7 @@ int main(void) {
 		//std::cout << timer << std::endl;
 		//pWorld.Step(deltaTime);
 
-		for (Object obj : gameobjects) {
+		/*for (Object obj : gameobjects) {
 			lightCubeShader.use();
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, obj.pos);
@@ -279,13 +358,36 @@ int main(void) {
 			lightCubeShader.setMat4("model", model);
 			lightCubeShader.setVec3("objectColor", obj.color);
 			quad.Draw();
-		}
+		}*/
+
+		//lightCubeShader.use();
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(5,0,0));
+		//model = glm::rotate(model, glm::radians(obj.Rot.x), glm::vec3(1, 0, 0));
+		//model = glm::rotate(model, glm::radians(obj.Rot.y), glm::vec3(0, 1, 0));
+		//model = glm::rotate(model, glm::radians(obj.Rot.z), glm::vec3(0, 0, 1));
+		//model = glm::scale(model, glm::vec3(2));
+		//
+		//lightCubeShader.setMat4("model", model);
+		//lightCubeShader.setVec3("objectColor", glm::vec3(1,0,1));
+		//quad.Draw();
+
+		//Update
+		cube.Update();
+		plane.Update();
+
+		//Render
+
+		
+		cube.Render();
+		plane.Render();
+		
 
 		//----------------------------------
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		//}
+		}
 	}
 
 

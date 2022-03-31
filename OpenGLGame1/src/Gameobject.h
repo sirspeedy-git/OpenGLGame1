@@ -5,27 +5,29 @@
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "Mesh.h"
 
-class Transform {
+class GameObject {
 public:
-	glm::vec3 Position = glm::vec3(0);
-	glm::vec3 Rotation = glm::vec3(0);
-	glm::vec3 Scale = glm::vec3(1);
-};
-
-class Gameobject {
-
-public:
-	Transform modelTransform;
-
-	//Gameobject(Mesh objectMesh, Shader objectShader);
-	//Gameobject(Mesh objectMesh, Shader objectShader, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
-	~Gameobject();
+	GameObject(Mesh* mesh, Shader* shader);
+	GameObject(Mesh* mesh, Shader* shader, glm::vec3 posistion, glm::vec3 rotation, glm::vec3 scale);
+	~GameObject();
 
 	void Render();
 	void Update();
-	
+	void setPosistion(glm::vec3 posistion);
+	void setRotation();
+	void setScale();
+	void setColor(glm::vec3 color);
+
 private:
-	Shader shader;
-	Mesh mesh;
+
+	void UpdateModelMatrix();
+
+	glm::vec3 pos;
+	glm::vec3 Rot;
+	glm::vec3 Scale;
+	glm::vec3 color;
 	glm::mat4 model;
+	Mesh* mesh;
+	Shader* shader;
+	//unsigned int ID;
 };

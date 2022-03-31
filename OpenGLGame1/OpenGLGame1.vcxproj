@@ -150,7 +150,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Gameobject.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\Source.cpp" />
