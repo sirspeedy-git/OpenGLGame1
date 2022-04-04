@@ -11,6 +11,7 @@
 #include "glm/glm/gtc/matrix_transform.hpp"
 #include "glm/glm/gtc/type_ptr.hpp"
 #include "Mesh.h"
+#include "Gameobject.h"
 
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
@@ -73,76 +74,33 @@ public:
 	//Shader shader;
 };
 
-class GameObject {
+
+class Player : public GameObject {
 public:
-	GameObject(Mesh* mesh, Shader* shader){
-		this->mesh = mesh;
-		this->shader = shader;
-		this->pos = glm::vec3(0);
-		this->Rot = glm::vec3(0);
-		this->Scale = glm::vec3(1);
-		this->color = glm::vec3(1,0,1);
-		this->model = glm::mat4(1.0f);
+	
+	Player(Mesh* mesh, Shader* shader, Camera* camera, glm::vec3 posistion, glm::vec3 rotation, glm::vec3 scale, glm::vec3 color)
+		:GameObject(mesh, shader, posistion, rotation, scale, color) {
+		this->camera = camera;
 	}
 
-	GameObject(Mesh* mesh, Shader* shader, glm::vec3 posistion, glm::vec3 rotation, glm::vec3 scale, glm::vec3 color) {
-		this->mesh = mesh;
-		this->shader = shader;
-		this->pos = posistion;
-		this->Rot = rotation;
-		this->Scale = scale;
-		this->color = color;
-		this->model = glm::mat4(1.0f);
-	}
+	void Update(float dt) {
+		
+		camera->Position = transform.posisiton + glm::vec3(0,2,5);
 
-	~GameObject() {};
-
-	void Render() {
-		shader->use();
-		shader->setMat4("model", model);
-		shader->setVec3("objectColor", color);
-		mesh->Draw();
-	}
-
-	void Update() {
 		UpdateModelMatrix();
 	}
 
-	void setPosistion(glm::vec3 posistion) {
-		this->pos = posistion;
+	void ProcessKeyboard(GLFWwindow* window, float dt) {
+		bool Down, Held, UP;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			std::cout << "UP" << std::endl;
+			transform.posisiton.z -= MovementSpeed * dt;
+		}
 	}
 
-	void setRotation(glm::vec3 rotation) {
-		this->Rot = rotation;
-	}
+	float MovementSpeed = 10;
+	Camera* camera;
 
-	void setScale(glm::vec3 scale) {
-		this->Scale = scale;
-	}
-
-	void setColor(glm::vec3 color) {
-		this->color = color;
-	}
-
-private:
-
-	void UpdateModelMatrix() {
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, pos);
-		model = glm::rotate(model, glm::radians(Rot.x), glm::vec3(1, 0, 0));
-		model = glm::rotate(model, glm::radians(Rot.y), glm::vec3(0, 1, 0));
-		model = glm::rotate(model, glm::radians(Rot.z), glm::vec3(0, 0, 1));
-		model = glm::scale(model, Scale);
-	}
-
-	glm::vec3 pos;
-	glm::vec3 Rot;
-	glm::vec3 Scale;
-	glm::vec3 color;
-	glm::mat4 model;
-	Mesh* mesh;
-	Shader* shader;
-	//unsigned int ID;
 };
 
 /*std::vector<Object> gameobjects{
@@ -162,6 +120,8 @@ float randRange(float min, float max) {
 
 bool shouldClose;
 GLFWwindow* window;
+
+Player* player;
 
 int Init() {
 
@@ -273,30 +233,28 @@ int main(void) {
 	//create a cube mesh
 	Mesh quad(newVertices, indices);
 	
-	//srand(time(0));
-	//for (int i = 0; i < 5000; i++) {
-	//	gameobjects.push_back({ glm::vec3(randRange(-250,250), randRange(-50,50) + 50, randRange(-250,250)),
-	//									  glm::vec3(randRange(0, 360),randRange(0, 360),randRange(0, 360)),
-	//									  glm::vec3(randRange(0.5, 5),randRange(0.5, 5),randRange(0.5, 5)),
-	//									  glm::vec3((randRange(0, 255) / 255),(randRange(0, 255) / 255),(randRange(0, 255) / 255)) });
-	//	//std::cout << "{glm::vec3(" << gameobjects[i + 2].pos.x << "," << gameobjects[i + 2].pos.y << "," << gameobjects[i + 2].pos.z << ")}" << std::endl;
-	//}
+	Transform tran(glm::vec3(0,5,0), glm::vec3(45,22,78), glm::vec3(1));
 	
-	//for (int i = 0; i < gameobjects.size(); i++) {
-	//	pWorld.AddObject(&gameobjects[i]);
-	//}
-	//std::cout << gameobjects.size() << std::endl;
-
-	float timer = 0;
-	int x = 0;
 
 	GameObject plane(&quad, &lightCubeShader, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(500, 0.2, 500), glm::vec3(1.0, 0.7, 0.6));
-	GameObject cube(&quad, &lightCubeShader);
-	cube.setPosistion(glm::vec3(0,1,0));
-	cube.setColor(glm::vec3(1.0, 0.1, 0.2));
+	GameObject cube(&quad, &lightCubeShader, tran, glm::vec3(1.0, 0.1, 0.2));
+
+	player = new Player(&quad, &lightCubeShader, &camera, glm::vec3(2, 2, 0), glm::vec3(0, 0, 0), glm::vec3(1, 2, 1), glm::vec3(0.3, 0.7, 0.4));
+
+	std::vector<GameObject> cubeCirlce;
+
+	srand(time(0));
+	for (int i = 0; i < 1000; i++) {
+		GameObject G(&quad, &lightCubeShader, glm::vec3(randRange(-250, 250), randRange(-50, 50) + 50, randRange(-250, 250)),
+			glm::vec3(randRange(0, 360), randRange(0, 360), randRange(0, 360)),
+			glm::vec3(randRange(0.5, 5), randRange(0.5, 5), randRange(0.5, 5)),
+			glm::vec3((randRange(0, 255) / 255), (randRange(0, 255) / 255), (randRange(0, 255) / 255)));
+		cubeCirlce.push_back(G);
+	}
 
 	while (!glfwWindowShouldClose(window)) {
-		{ Timer timer;
+		//{ Timer timer;
+		
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -373,8 +331,10 @@ int main(void) {
 		//quad.Draw();
 
 		//Update
-		cube.Update();
-		plane.Update();
+		cube.Update(deltaTime);
+		plane.Update(deltaTime);
+
+		//player->Update(deltaTime);
 
 		//Render
 
@@ -382,19 +342,19 @@ int main(void) {
 		cube.Render();
 		plane.Render();
 		
+		//player->Render();
+
+		for (auto G : cubeCirlce) {
+			G.Update(deltaTime);
+			G.Render();
+		}
 
 		//----------------------------------
 		//check & call events & swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		}
+		//}
 	}
-
-
-
-	//glDeleteVertexArrays(1, &cubeVAO);
-	//glDeleteVertexArrays(1, &lightCubeVAO);
-	//glDeleteBuffers(1, &VBO);
 
 	glfwTerminate();
 	return 0;
@@ -429,10 +389,8 @@ void processInput(GLFWwindow* window) {
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
-
-	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_RELEASE) {
-		
-	}
+	
+	player->ProcessKeyboard(window, deltaTime);
 }
 
 
