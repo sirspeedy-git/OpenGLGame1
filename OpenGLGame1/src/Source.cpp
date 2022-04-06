@@ -64,17 +64,6 @@ private:
 //TODO - model loading
 //TODO - entitys
 
-class Object {
-public:
-	glm::vec3 pos;
-	glm::vec3 Rot;
-	glm::vec3 Scale;
-	glm::vec3 color;
-	//Mesh mesh;
-	//Shader shader;
-};
-
-
 class Player : public GameObject {
 public:
 	
@@ -84,8 +73,7 @@ public:
 	}
 
 	void Update(float dt) {
-		
-		camera->Position = transform.posisiton + glm::vec3(0,2,5);
+
 
 		UpdateModelMatrix();
 	}
@@ -93,15 +81,19 @@ public:
 	void ProcessKeyboard(GLFWwindow* window, float dt) {
 		bool Down, Held, UP;
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			std::cout << "UP" << std::endl;
+			//std::cout << "UP" << std::endl;
+			camera->Position.z -= MovementSpeed * dt;
 			transform.posisiton.z -= MovementSpeed * dt;
 		}
 	}
+
+
 
 	float MovementSpeed = 10;
 	Camera* camera;
 
 };
+Player* player;
 
 /*std::vector<Object> gameobjects{
 	{glm::vec3(0,0,0),glm::vec3(0,0,0),glm::vec3(500, 0.2, 500),glm::vec3(1.0, 0.7, 0.6)},
@@ -118,10 +110,8 @@ float randRange(float min, float max) {
 
 //PhysicsWorld pWorld;
 
-bool shouldClose;
 GLFWwindow* window;
 
-Player* player;
 
 int Init() {
 
@@ -234,12 +224,12 @@ int main(void) {
 	Mesh quad(newVertices, indices);
 	
 	Transform tran(glm::vec3(0,5,0), glm::vec3(45,22,78), glm::vec3(1));
+	GameObject cube(&quad, &lightCubeShader, tran, glm::vec3(1.0, 0.1, 0.2));
 	
 
 	GameObject plane(&quad, &lightCubeShader, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(500, 0.2, 500), glm::vec3(1.0, 0.7, 0.6));
-	GameObject cube(&quad, &lightCubeShader, tran, glm::vec3(1.0, 0.1, 0.2));
 
-	player = new Player(&quad, &lightCubeShader, &camera, glm::vec3(2, 2, 0), glm::vec3(0, 0, 0), glm::vec3(1, 2, 1), glm::vec3(0.3, 0.7, 0.4));
+	player = new Player(&quad, &lightCubeShader, &camera, glm::vec3(2, 1, 0), glm::vec3(0, 0, 0), glm::vec3(3, 2, 4), glm::vec3(0.3, 0.7, 0.4));
 
 	std::vector<GameObject> cubeCirlce;
 
@@ -334,7 +324,7 @@ int main(void) {
 		cube.Update(deltaTime);
 		plane.Update(deltaTime);
 
-		//player->Update(deltaTime);
+		player->Update(deltaTime);
 
 		//Render
 
@@ -342,7 +332,7 @@ int main(void) {
 		cube.Render();
 		plane.Render();
 		
-		//player->Render();
+		player->Render();
 
 		for (auto G : cubeCirlce) {
 			G.Update(deltaTime);
@@ -390,7 +380,7 @@ void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWN, deltaTime);
 	
-	player->ProcessKeyboard(window, deltaTime);
+	//player->ProcessKeyboard(window, deltaTime);
 }
 
 
