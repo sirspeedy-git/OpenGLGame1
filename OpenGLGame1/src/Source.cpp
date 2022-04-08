@@ -26,7 +26,7 @@ int WIDTH = 1280, HEIGHT = 720;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-Camera camera(glm::vec3(5.0f, 5.0f, 25.0f));
+Camera camera(glm::vec3(0.0f, 5.0f, 15.0f));
 float lastX = WIDTH / 2;
 float lastY = HEIGHT / 2;
 bool firstMouse = true;
@@ -229,7 +229,7 @@ int main(void) {
 
 	GameObject plane(&quad, &lightCubeShader, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(500, 0.2, 500), glm::vec3(1.0, 0.7, 0.6));
 
-	player = new Player(&quad, &lightCubeShader, &camera, glm::vec3(2, 1, 0), glm::vec3(0, 0, 0), glm::vec3(3, 2, 4), glm::vec3(0.3, 0.7, 0.4));
+	player = new Player(&quad, &lightCubeShader, &camera, glm::vec3(0, 1, 0), glm::vec3(0, 0, 0), glm::vec3(3, 2, 4), glm::vec3(0.3, 0.7, 0.4));
 
 	std::vector<GameObject> cubeCirlce;
 
@@ -237,7 +237,7 @@ int main(void) {
 	for (int i = 0; i < 1000; i++) {
 		GameObject G(&quad, &lightCubeShader, glm::vec3(randRange(-250, 250), randRange(-50, 50) + 50, randRange(-250, 250)),
 			glm::vec3(randRange(0, 360), randRange(0, 360), randRange(0, 360)),
-			glm::vec3(randRange(0.5, 5), randRange(0.5, 5), randRange(0.5, 5)),
+			glm::vec3(randRange(0.5, 10), randRange(0.5, 10), randRange(0.5, 10)),
 			glm::vec3((randRange(0, 255) / 255), (randRange(0, 255) / 255), (randRange(0, 255) / 255)));
 		cubeCirlce.push_back(G);
 	}
@@ -324,11 +324,13 @@ int main(void) {
 		cube.Update(deltaTime);
 		plane.Update(deltaTime);
 
+		player->setPosistion(camera.Position + camera.Front);
+		player->setScale(glm::vec3(0.1));
+		player->setScale(glm::vec3(0.05,0.05,0.05));
+		player->setRotation(glm::vec3(0, -camera.Yaw, camera.Pitch));
 		player->Update(deltaTime);
 
 		//Render
-
-		
 		cube.Render();
 		plane.Render();
 		
@@ -367,18 +369,18 @@ void processInput(GLFWwindow* window) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWORD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		camera.ProcessKeyboard(UP, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		camera.ProcessKeyboard(DOWN, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//		camera.ProcessKeyboard(FORWARD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//		camera.ProcessKeyboard(BACKWORD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//		camera.ProcessKeyboard(LEFT, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//		camera.ProcessKeyboard(RIGHT, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+//		camera.ProcessKeyboard(UP, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+//		camera.ProcessKeyboard(DOWN, deltaTime);
 	
 	//player->ProcessKeyboard(window, deltaTime);
 }

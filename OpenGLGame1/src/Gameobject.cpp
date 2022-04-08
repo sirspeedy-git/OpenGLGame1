@@ -20,6 +20,7 @@ GameObject::GameObject(Mesh* mesh, Shader* shader){
 	this->transform.scale = glm::vec3(1);
 	this->color = glm::vec3(1, 0, 1);
 	this->transform.model = glm::mat4(1.0f);
+	Update(0);
 }
 
 GameObject::GameObject(Mesh* mesh, Shader* shader, glm::vec3 posistion, glm::vec3 rotation, glm::vec3 scale, glm::vec3 color){
@@ -30,6 +31,7 @@ GameObject::GameObject(Mesh* mesh, Shader* shader, glm::vec3 posistion, glm::vec
 	this->transform.scale = scale;
 	this->color = color;
 	this->transform.model = glm::mat4(1.0f);
+	Update(0);
 }
 
 GameObject::GameObject(Mesh* mesh, Shader* shader, Transform transform, glm::vec3 color){
@@ -40,6 +42,7 @@ GameObject::GameObject(Mesh* mesh, Shader* shader, Transform transform, glm::vec
 	this->transform.scale = transform.scale;
 	this->color = color;
 	this->transform.model = glm::mat4(1.0f);
+	Update(0);
 }
 
 

@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
-
+#include "Gameobject.h"
 #include <vector>
 
 enum CameraMovement {
@@ -25,6 +25,9 @@ const float ZOOM = 45.0f;
 
 class Camera {
 public:
+
+    Transform LookAtTransform;
+
     // Camera Attributes
     glm::vec3 Position;
     glm::vec3 Front;
