@@ -17,16 +17,17 @@ enum CameraMovement {
 };
 
 const float YAW = -90.0f;
-const float PITCH = 0.0f;
+const float PITCH = 20.0f;
 const float ROLL = 0.0f;
-const float SPEED = 10.0f;
+const float SPEED = 20.0f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
 class Camera {
 public:
 
-    Transform LookAtTransform;
+    Transform TargetTransform;
+    float AngleAroundTarget = 180;
 
     // Camera Attributes
     glm::vec3 Position;
@@ -73,6 +74,10 @@ public:
         return glm::vec3(Yaw, Pitch, Roll);
     }
 
+    void SetAngleAroundTarget(float angle) {
+        AngleAroundTarget = angle;
+    }
+
     void ProcessKeyboard(CameraMovement direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
@@ -117,6 +122,21 @@ public:
             Zoom = 45.0f;
     }
 
+    void CalculatePos(float horizontal, float vertical) {
+        float theta = TargetTransform.rotation.y + AngleAroundTarget;
+        float offsetX = horizontal + sin(glm::radians(theta));
+        float offsetZ = horizontal + cos(glm::radians(theta));
+        Position.x = TargetTransform.posisiton.x - offsetX;
+        Position.z = TargetTransform.posisiton.z - offsetZ;
+        Position.y = TargetTransform.posisiton.y + vertical;
+    }
+
+    void Move() {
+        float horizontal = CalulateHorizontalDistance();
+        float vertical = CalulateVerticalDistance();
+        CalculatePos(horizontal, vertical);
+    }
+
 private:
     void updateCameraVectors() {
         glm::vec3 front;
@@ -127,6 +147,14 @@ private:
 
         Right = glm::normalize(glm::cross(Front, WorldUp));
         Up    = glm::normalize(glm::cross(Right, Front));
+    }
+
+    float CalulateHorizontalDistance() {
+        return 10 * cos(glm::radians(Pitch));
+    }
+
+    float CalulateVerticalDistance() {
+        return 10 * sin(glm::radians(-Pitch));
     }
 
 };
